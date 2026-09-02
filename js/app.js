@@ -770,7 +770,7 @@ function renderDashboard() {
       <div class="section-header">
         <h3 class="section-title"><i class="lucide-zap" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Acciones rápidas</h3>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:28px;">
+      <div class="quick-actions-grid">
         ${quickAction('lucide-door-open', 'Ingreso planta', 'ingreso_planta', 'var(--info)', 'Registra el ingreso del personal con verificación de EPP')}
         ${quickAction('lucide-sparkles', 'Limpieza', 'limpieza', 'var(--brand-copper)', 'Registra limpieza pre/post producción')}
         ${quickAction('lucide-flask-conical', 'Nuevo lote', 'produccion_lote', 'var(--brand-coffee)', 'Inicia un nuevo lote de producción')}
@@ -933,7 +933,7 @@ function renderProduccion() {
       </div>
 
       <!-- Quick stats -->
-      <div class="stat-grid" style="grid-template-columns:repeat(auto-fit,minmax(120px,1fr));">
+      <div class="stat-grid stat-grid-3">
         <div class="stat-card">
           <div class="stat-icon brown"><i class="lucide-flask-conical"></i></div>
           <div class="stat-value">${lotes.length}</div>
@@ -1157,7 +1157,7 @@ function renderFormPage(params) {
   const formEl = document.createElement('form');
   formEl.id = `form-${formId}`;
   formEl.className = 'card';
-  formEl.style.padding = '24px';
+  formEl.style.padding = '';
   formEl.style.marginBottom = '24px';
 
   let html = '';
@@ -1316,7 +1316,7 @@ function buildTableFields(config) {
   let html = `
     <div class="form-group" style="margin-top:20px;">
       <label class="form-label"><i class="lucide-table" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>${config.label}</label>
-      <div style="overflow-x:auto;">
+      <div class="table-scroll-wrapper">
         <table class="form-table">
           <thead><tr>
             ${config.columns.map(c => `<th>${c}</th>`).join('')}
@@ -1366,7 +1366,7 @@ function buildChecklistFields(config) {
               <input type="text" name="persona_cargo_0" class="form-input" placeholder="Cargo o motivo">
             </div>
           </div>
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">`;
+          <div class="checklist-checks">`;
 
   config.checks.forEach(check => {
     html += `
@@ -1423,7 +1423,7 @@ function buildPlagasInspection() {
     html += `
       <div style="margin-bottom:16px;">
         <h4 style="font-size:0.85rem;font-weight:700;color:var(--primary);margin-bottom:8px;padding:8px 0;border-bottom:1px solid var(--border);">${area.title}</h4>
-        <table class="form-table">
+        <div class="table-scroll-wrapper"><table class="form-table">
           <thead><tr>
             <th style="width:40%;">Aspecto</th>
             <th>Sem 1</th><th>Sem 2</th><th>Sem 3</th><th>Sem 4</th>
@@ -1442,7 +1442,7 @@ function buildPlagasInspection() {
       </tr>`;
     });
 
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
   });
 
   html += '</div>';
@@ -1456,7 +1456,7 @@ function buildVerificationChecklist(config) {
     html += `
       <div style="margin-bottom:20px;">
         <h4 style="font-size:0.88rem;font-weight:700;color:var(--primary);margin-bottom:10px;">${section.title}</h4>
-        <table class="form-table">
+        <div class="table-scroll-wrapper"><table class="form-table">
           <thead><tr>
             <th style="width:35%;">Aspecto a verificar</th>
             <th style="width:25%;">Criterio</th>
@@ -1481,7 +1481,7 @@ function buildVerificationChecklist(config) {
       </tr>`;
     });
 
-    html += '</tbody></table></div>';
+    html += '</tbody></table></div></div>';
   });
 
   html += '</div>';
@@ -1516,7 +1516,7 @@ window.addPerson = function() {
         <input type="text" name="persona_cargo_${personCount}" class="form-input" placeholder="Cargo o motivo">
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+    <div class="checklist-checks">
       ${checks.map(c => `
         <div class="form-check" data-name="check_${personCount}_${c.toLowerCase().replace(/\s/g, '_')}" onclick="toggleCheck(this)">
           <div class="check-box"><i class="lucide-check"></i></div>
