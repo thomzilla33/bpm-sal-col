@@ -45,24 +45,24 @@
 ## 3. Typography
 
 ### Headline Font
-- **Family:** Playfair Display
+- **Family:** Space Mono
 - **Source:** Google Fonts
-- **Weights:** 600 (semibold), 700 (bold), 800 (extrabold)
-- **Usage:** Page titles, section headings, logo complement
-- **Tracking:** -0.02em for display sizes
+- **Weights:** 400 (regular), 700 (bold)
+- **Usage:** Page titles, section headings, logo complement, stat values
+- **Tracking:** -0.03em for display sizes
 
 ### Body Font
-- **Family:** Inter
-- **Source:** Google Fonts
-- **Weights:** 400 (regular), 500 (medium), 600 (semibold)
-- **Usage:** Form labels, body text, navigation, data
+- **Family:** Arial
+- **Source:** System font (no download needed)
+- **Weights:** 400 (regular), 700 (bold)
+- **Usage:** Form labels, body text, navigation, data, buttons
 - **Line height:** 1.5 for body, 1.3 for labels
 
 ### Font Pairing Rules
-- Never use more than these two families in one view
-- Playfair for H1, H2 only; Inter for everything else
-- Form labels, buttons, nav items: Always Inter
-- Dashboard greeting, page titles: Playfair
+- Only two families allowed: Space Mono + Arial
+- Space Mono for H1, H2, H3, category headers, stat values
+- Arial for everything else (body, forms, nav, buttons)
+- No other fonts permitted
 
 ## 4. Logo
 

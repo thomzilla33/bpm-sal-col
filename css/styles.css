@@ -54,9 +54,9 @@
   --shadow-lg: 0 8px 24px rgba(26, 20, 16, 0.10);
   --shadow-xl: 0 16px 48px rgba(26, 20, 16, 0.14);
 
-  /* Typography */
-  --font-display: 'Playfair Display', 'Georgia', serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
+  /* Typography — Arial + Space Mono only */
+  --font-display: 'Space Mono', monospace;
+  --font-body: Arial, Helvetica, sans-serif;
 }
 
 /* ============================================
@@ -71,8 +71,8 @@ html {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Display headings use brand serif */
-h1, h2, h3, .display-font { font-family: var(--font-display); letter-spacing: -0.02em; }
+/* Display headings use Space Mono */
+h1, h2, h3, .display-font { font-family: var(--font-display); letter-spacing: -0.03em; }
 
 body {
   background: var(--bg);
@@ -132,9 +132,9 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
 .logo-text strong {
   display: block;
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   color: var(--brand-beige);
 }
 
