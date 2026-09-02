@@ -457,7 +457,7 @@ function buildNav() {
   // Sidebar
   let sidebarHTML = '<div class="nav-section-label">Principal</div>';
   NAV_ITEMS.forEach(item => {
-    const badge = item.id === 'formatos' ? '<span class="badge">13</span>' : '';
+    const badge = item.id === 'formatos' ? '<span class="badge"><i class="lucide-file-stack" style="margin-right:2px;font-size:0.65rem;"></i>13</span>' : '';
     sidebarHTML += `
       <button class="nav-item" data-route="${item.id}" onclick="Router.navigate('${item.id}')">
         <i class="${item.icon}"></i>
@@ -556,8 +556,8 @@ function renderDashboard() {
     <div class="fade-in">
       <!-- Welcome -->
       <div style="margin-bottom:24px;">
-        <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:4px;">Buenos días &#9749;</h2>
-        <p style="color:var(--text-secondary);font-size:0.9rem;">Salentino Coffee Lab — ${new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+        <h2 style="font-size:1.5rem;font-weight:800;margin-bottom:4px;"><i class="lucide-sun" style="margin-right:6px;color:var(--brand-copper);"></i>Buenos días</h2>
+        <p style="color:var(--text-secondary);font-size:0.9rem;"><i class="lucide-coffee" style="margin-right:4px;font-size:0.85rem;"></i>Salentino Coffee Lab — ${new Date().toLocaleDateString('es-CO', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
       </div>
 
       <!-- Stats -->
@@ -591,7 +591,7 @@ function renderDashboard() {
 
       <!-- Quick Actions -->
       <div class="section-header">
-        <h3 class="section-title">Acciones rápidas</h3>
+        <h3 class="section-title"><i class="lucide-zap" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Acciones rápidas</h3>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:28px;">
         ${quickAction('lucide-door-open', 'Ingreso planta', 'ingreso_planta', 'var(--info)', 'Registra el ingreso del personal con verificación de EPP')}
@@ -614,27 +614,27 @@ function renderDashboard() {
 
       <!-- Upcoming -->
       <div class="section-header">
-        <h3 class="section-title">Próximas actividades</h3>
+        <h3 class="section-title"><i class="lucide-calendar-clock" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Próximas actividades</h3>
       </div>
       <div style="margin-bottom:24px;">
         <div class="upcoming-item">
           <div class="upcoming-date"><div class="day">05</div><div class="month">Sep</div></div>
           <div class="upcoming-info">
-            <div class="up-title">Inspección de plagas - mensual</div>
+            <div class="up-title"><i class="lucide-bug" style="margin-right:5px;font-size:0.85rem;color:var(--warning);"></i>Inspección de plagas - mensual</div>
             <div class="up-desc">FOR-CIP-001 · Todas las áreas</div>
           </div>
         </div>
         <div class="upcoming-item">
           <div class="upcoming-date"><div class="day">08</div><div class="month">Sep</div></div>
           <div class="upcoming-info">
-            <div class="up-title">Verificación de agua y filtración</div>
+            <div class="up-title"><i class="lucide-droplets" style="margin-right:5px;font-size:0.85rem;color:var(--info);"></i>Verificación de agua y filtración</div>
             <div class="up-desc">FOR-ACA-001 · Sistema de filtración</div>
           </div>
         </div>
         <div class="upcoming-item">
           <div class="upcoming-date"><div class="day">10</div><div class="month">Sep</div></div>
           <div class="upcoming-info">
-            <div class="up-title">Capacitación: BPM y manejo de alimentos</div>
+            <div class="up-title"><i class="lucide-graduation-cap" style="margin-right:5px;font-size:0.85rem;color:var(--success);"></i>Capacitación: BPM y manejo de alimentos</div>
             <div class="up-desc">FOR-CAP-001 · Todo el personal</div>
           </div>
         </div>
@@ -643,8 +643,8 @@ function renderDashboard() {
       <!-- Recent Activity -->
       <div class="card" style="margin-bottom:24px;">
         <div class="section-header" style="margin-bottom:12px;">
-          <h3 class="section-title">Actividad reciente</h3>
-          <button class="section-action" onclick="Router.navigate('registros')">Ver todo</button>
+          <h3 class="section-title"><i class="lucide-activity" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Actividad reciente</h3>
+          <button class="section-action" onclick="Router.navigate('registros')"><i class="lucide-arrow-right" style="margin-right:4px;font-size:0.8rem;"></i>Ver todo</button>
         </div>
         <div class="activity-list" id="recent-activity">
           ${renderRecentActivity()}
@@ -678,8 +678,9 @@ function renderRecentActivity() {
 
   if (allRecords.length === 0) {
     return `<div class="empty-state" style="padding:24px;">
-      <i class="lucide-inbox" style="font-size:32px;"></i>
-      <p style="margin-top:8px;">No hay registros aún. Comienza llenando un formato.</p>
+      <i class="lucide-inbox" style="font-size:32px;color:var(--text-muted);"></i>
+      <p style="margin-top:8px;">No hay registros aún.</p>
+      <p style="font-size:0.82rem;color:var(--text-muted);"><i class="lucide-clipboard-pen" style="margin-right:4px;"></i>Comienza llenando un formato.</p>
     </div>`;
   }
 
@@ -693,7 +694,7 @@ function renderRecentActivity() {
           <div class="activity-text">${r.formTitle}</div>
           <div class="activity-time">${r.formCode} · ${formatDateTime(r.createdAt)}</div>
         </div>
-        <span class="status-badge complete">Completado</span>
+        <span class="status-badge complete"><i class="lucide-check-circle" style="margin-right:3px;font-size:0.7rem;"></i>Completado</span>
       </div>`;
   }).join('');
 }
@@ -703,8 +704,8 @@ function renderFormatos() {
   return `
     <div class="fade-in">
       <div style="margin-bottom:20px;">
-        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Formatos BPM</h2>
-        <p style="color:var(--text-secondary);font-size:0.85rem;">13 formatos organizados por programa</p>
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;"><i class="lucide-clipboard-list" style="margin-right:6px;color:var(--brand-copper);"></i>Formatos BPM</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;"><i class="lucide-layers" style="margin-right:4px;font-size:0.8rem;"></i>13 formatos organizados por programa</p>
       </div>
 
       <div class="category-grid">
@@ -746,11 +747,11 @@ function renderProduccion() {
     <div class="fade-in">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
         <div>
-          <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Producción</h2>
-          <p style="color:var(--text-secondary);font-size:0.85rem;">Control de lotes, temperatura y muestreo</p>
+          <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;"><i class="lucide-flask-conical" style="margin-right:6px;color:var(--brand-copper);"></i>Producción</h2>
+          <p style="color:var(--text-secondary);font-size:0.85rem;"><i class="lucide-git-branch" style="margin-right:4px;font-size:0.8rem;"></i>Control de lotes, temperatura y muestreo</p>
         </div>
         <button class="btn btn-primary" onclick="Router.navigate('form/produccion_lote')">
-          <i class="lucide-plus"></i> Nuevo lote
+          <i class="lucide-plus-circle"></i> Nuevo lote
         </button>
       </div>
 
@@ -775,7 +776,7 @@ function renderProduccion() {
 
       <!-- Production forms -->
       <div class="section-header">
-        <h3 class="section-title">Formularios de producción</h3>
+        <h3 class="section-title"><i class="lucide-file-input" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Formularios de producción</h3>
       </div>
       <div class="format-list" style="margin-bottom:24px;">
         ${['produccion_lote', 'control_temp', 'muestreo'].map(fId => {
@@ -796,13 +797,13 @@ function renderProduccion() {
 
       <!-- Recent lots -->
       <div class="section-header">
-        <h3 class="section-title">Últimos lotes</h3>
+        <h3 class="section-title"><i class="lucide-history" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Últimos lotes</h3>
       </div>
       ${lotes.length === 0 ? `
         <div class="empty-state">
-          <i class="lucide-flask-conical"></i>
+          <i class="lucide-flask-conical" style="color:var(--text-muted);"></i>
           <h3>Sin lotes registrados</h3>
-          <p>Crea tu primer lote de producción</p>
+          <p><i class="lucide-plus-circle" style="margin-right:4px;font-size:0.85rem;"></i>Crea tu primer lote de producción</p>
         </div>
       ` : lotes.slice(0, 5).map(r => `
         <div class="registro-item">
@@ -813,7 +814,7 @@ function renderProduccion() {
             <div class="ri-title">Lote: ${r.data?.lote || '—'}</div>
             <div class="ri-meta">${r.data?.cafe_utilizado || ''} · ${r.data?.cant_botellas || 0} botellas · ${formatDate(r.createdAt)}</div>
           </div>
-          <span class="status-badge complete">Completado</span>
+          <span class="status-badge complete"><i class="lucide-check-circle" style="margin-right:3px;font-size:0.7rem;"></i>Completado</span>
         </div>
       `).join('')}
     </div>
@@ -833,23 +834,23 @@ function renderRegistros() {
   return `
     <div class="fade-in">
       <div style="margin-bottom:20px;">
-        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Registros</h2>
-        <p style="color:var(--text-secondary);font-size:0.85rem;">${allRecords.length} registros guardados</p>
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;"><i class="lucide-database" style="margin-right:6px;color:var(--brand-copper);"></i>Registros</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;"><i class="lucide-archive" style="margin-right:4px;font-size:0.8rem;"></i>${allRecords.length} registros guardados</p>
       </div>
 
       <!-- Filter tabs -->
       <div class="tabs">
-        <button class="tab-btn active" onclick="filterRegistros(this,'all')">Todos</button>
-        <button class="tab-btn" onclick="filterRegistros(this,'today')">Hoy</button>
-        ${PROGRAMS.map(p => `<button class="tab-btn" onclick="filterRegistros(this,'${p.id}')">${p.name.split(' ')[0]}</button>`).join('')}
+        <button class="tab-btn active" onclick="filterRegistros(this,'all')"><i class="lucide-list" style="margin-right:4px;font-size:0.8rem;"></i>Todos</button>
+        <button class="tab-btn" onclick="filterRegistros(this,'today')"><i class="lucide-calendar-check" style="margin-right:4px;font-size:0.8rem;"></i>Hoy</button>
+        ${PROGRAMS.map(p => `<button class="tab-btn" onclick="filterRegistros(this,'${p.id}')"><i class="${p.icon}" style="margin-right:4px;font-size:0.8rem;"></i>${p.name.split(' ')[0]}</button>`).join('')}
       </div>
 
       <div id="registros-list">
         ${allRecords.length === 0 ? `
           <div class="empty-state">
-            <i class="lucide-archive"></i>
+            <i class="lucide-archive" style="color:var(--text-muted);"></i>
             <h3>Sin registros</h3>
-            <p>Los registros aparecerán aquí cuando completes formularios</p>
+            <p><i class="lucide-clipboard-pen" style="margin-right:4px;font-size:0.85rem;"></i>Los registros aparecerán aquí cuando completes formularios</p>
           </div>
         ` : allRecords.map(r => `
           <div class="registro-item" data-form="${r.formId}" data-date="${r.createdAt?.slice(0,10)}">
@@ -860,7 +861,7 @@ function renderRegistros() {
               <div class="ri-title">${r.formTitle}</div>
               <div class="ri-meta">${r.formCode} · ${formatDateTime(r.createdAt)}</div>
             </div>
-            <span class="status-badge complete">OK</span>
+            <span class="status-badge complete"><i class="lucide-check" style="margin-right:2px;font-size:0.7rem;"></i>OK</span>
           </div>
         `).join('')}
       </div>
@@ -892,8 +893,8 @@ function renderReportes() {
   return `
     <div class="fade-in">
       <div style="margin-bottom:20px;">
-        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;">Reportes</h2>
-        <p style="color:var(--text-secondary);font-size:0.85rem;">Cumplimiento, estadísticas y exportación</p>
+        <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;"><i class="lucide-bar-chart-3" style="margin-right:6px;color:var(--brand-copper);"></i>Reportes</h2>
+        <p style="color:var(--text-secondary);font-size:0.85rem;"><i class="lucide-trending-up" style="margin-right:4px;font-size:0.8rem;"></i>Cumplimiento, estadísticas y exportación</p>
       </div>
 
       <div class="alert alert-info">
@@ -915,7 +916,7 @@ function renderReportes() {
 
       <!-- Export options -->
       <div class="section-header">
-        <h3 class="section-title">Exportar</h3>
+        <h3 class="section-title"><i class="lucide-download" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Exportar</h3>
       </div>
       <div class="format-list">
         <button class="format-card" onclick="showToast('Exportación PDF iniciada...','success')">
@@ -970,8 +971,8 @@ function renderFormPage(params) {
       </button>
     </div>
     <div class="form-page-header">
-      <h2>${form.title}</h2>
-      <div class="form-code">${form.code} · Versión 01 · Julio 2026</div>
+      <h2><i class="${form.icon}" style="margin-right:8px;color:var(--brand-copper);"></i>${form.title}</h2>
+      <div class="form-code"><i class="lucide-file-badge" style="margin-right:4px;font-size:0.8rem;"></i>${form.code} · Versión 01 · Julio 2026</div>
     </div>
   `;
 
@@ -1028,7 +1029,7 @@ function renderFormPage(params) {
   if (form.hasSignature) {
     html += `
       <div class="form-group" style="margin-top:24px;">
-        <label class="form-label">Firma del responsable</label>
+        <label class="form-label"><i class="lucide-pen-tool" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>Firma del responsable</label>
         <div class="signature-pad" id="sig-pad">
           <canvas id="sig-canvas"></canvas>
           <span class="sig-placeholder"><i class="lucide-pen-tool" style="margin-right:6px;"></i> Toque aquí para firmar</span>
@@ -1043,9 +1044,9 @@ function renderFormPage(params) {
   // Submit buttons
   html += `
     <div class="btn-group" style="justify-content:flex-end;">
-      <button type="button" class="btn btn-outline" onclick="history.back()">Cancelar</button>
+      <button type="button" class="btn btn-outline" onclick="history.back()"><i class="lucide-x" style="margin-right:4px;"></i>Cancelar</button>
       <button type="submit" class="btn btn-success btn-lg">
-        <i class="lucide-check"></i> Guardar registro
+        <i class="lucide-save"></i> Guardar registro
       </button>
     </div>
   `;
@@ -1075,14 +1076,40 @@ function renderFormPage(params) {
   return container;
 }
 
+const FIELD_ICONS = {
+  fecha: 'lucide-calendar', fecha_produccion: 'lucide-calendar', fecha_hora: 'lucide-calendar-clock',
+  fecha_limite: 'lucide-calendar-x', fecha_vencimiento: 'lucide-calendar-x',
+  hora: 'lucide-clock', hora_inicio: 'lucide-clock', hora_fin: 'lucide-clock-4',
+  lote: 'lucide-hash', lote_produccion: 'lucide-hash',
+  operario: 'lucide-hard-hat', responsable: 'lucide-user-check', revisado_por: 'lucide-user-check',
+  verificado_por: 'lucide-user-check', inspector: 'lucide-scan-eye', facilitador: 'lucide-presentation',
+  cafe_utilizado: 'lucide-coffee', agua_utilizada: 'lucide-droplets',
+  tiempo: 'lucide-timer', duracion: 'lucide-timer',
+  cant_producida: 'lucide-beaker', cant_botellas: 'lucide-wine',
+  cant_muestra: 'lucide-test-tube', identificacion: 'lucide-tag',
+  ubicacion: 'lucide-map-pin', temperatura: 'lucide-thermometer',
+  lugar: 'lucide-map-pin',
+  area_equipo: 'lucide-factory', nc_detectada: 'lucide-alert-octagon',
+  causa_posible: 'lucide-search', accion_inmediata: 'lucide-zap',
+  accion_correctiva: 'lucide-wrench', resultado_verificacion: 'lucide-clipboard-check',
+  objetivo: 'lucide-target', mes: 'lucide-calendar-range',
+  verificacion: 'lucide-shield-check',
+};
+
+function fieldIcon(name) {
+  const ico = FIELD_ICONS[name];
+  return ico ? `<i class="${ico}" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>` : '';
+}
+
 function buildField(field) {
   const req = field.required ? '<span class="required">*</span>' : '';
   const reqAttr = field.required ? 'required' : '';
+  const ico = fieldIcon(field.name);
 
   if (field.type === 'textarea') {
     return `
       <div class="form-group">
-        <label class="form-label">${field.label}${req}</label>
+        <label class="form-label">${ico}${field.label}${req}</label>
         <textarea name="${field.name}" class="form-textarea" placeholder="${field.placeholder || ''}" ${reqAttr}></textarea>
       </div>`;
   }
@@ -1090,7 +1117,7 @@ function buildField(field) {
   if (field.type === 'select') {
     return `
       <div class="form-group">
-        <label class="form-label">${field.label}${req}</label>
+        <label class="form-label">${ico}${field.label}${req}</label>
         <select name="${field.name}" class="form-select" ${reqAttr}>
           ${(field.options || []).map(o => `<option value="${o}">${o}</option>`).join('')}
         </select>
@@ -1102,7 +1129,7 @@ function buildField(field) {
 
   return `
     <div class="form-group">
-      <label class="form-label">${field.label}${req}</label>
+      <label class="form-label">${ico}${field.label}${req}</label>
       <input type="${field.type}" name="${field.name}" class="form-input"
         placeholder="${field.placeholder || ''}" ${reqAttr} ${defaultVal}>
     </div>`;
@@ -1111,7 +1138,7 @@ function buildField(field) {
 function buildTableFields(config) {
   let html = `
     <div class="form-group" style="margin-top:20px;">
-      <label class="form-label">${config.label}</label>
+      <label class="form-label"><i class="lucide-table" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>${config.label}</label>
       <div style="overflow-x:auto;">
         <table class="form-table">
           <thead><tr>
@@ -1149,7 +1176,7 @@ function buildTableFields(config) {
 function buildChecklistFields(config) {
   let html = `
     <div class="form-group" style="margin-top:20px;">
-      <label class="form-label">${config.label}</label>
+      <label class="form-label"><i class="lucide-list-checks" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>${config.label}</label>
       <div id="checklist-persons">
         <div class="checklist-person" style="background:var(--bg);border-radius:var(--radius);padding:16px;margin-bottom:12px;">
           <div class="form-row" style="margin-bottom:12px;">
@@ -1177,7 +1204,7 @@ function buildChecklistFields(config) {
         </div>
       </div>
       <button type="button" class="btn btn-outline btn-sm" onclick="addPerson()">
-        <i class="lucide-plus"></i> Agregar persona
+        <i class="lucide-user-plus"></i> Agregar persona
       </button>
     </div>`;
 
@@ -1213,7 +1240,7 @@ function buildPlagasInspection() {
   ];
 
   let html = '<div style="margin-top:20px;">';
-  html += '<label class="form-label">Inspección por área (C = Cumple, NC = No Cumple, NA = No Aplica)</label>';
+  html += '<label class="form-label"><i class="lucide-scan-search" style="margin-right:5px;font-size:0.85rem;color:var(--brand-copper);"></i>Inspección por área (C = Cumple, NC = No Cumple, NA = No Aplica)</label>';
 
   areas.forEach((area, ai) => {
     html += `
@@ -1396,7 +1423,7 @@ function initCharts() {
   chartInstances = {};
 
   const defaults = Chart.defaults;
-  defaults.font.family = 'Inter';
+  defaults.font.family = 'Arial';
   defaults.font.size = 12;
   defaults.color = '#6B5B4F';
 

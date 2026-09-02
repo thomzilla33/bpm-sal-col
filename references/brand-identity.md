@@ -1,10 +1,10 @@
-# Brand Identity — Co.Salento / Salentino Coffee Lab
+# Brand Identity — Salentino Coffee Lab
 
 ## 1. Brand Overview
 
 | Field | Value |
 |-------|-------|
-| Brand Name | Co.Salento |
+| Brand Name | Salentino |
 | Sub-brand | Salentino Coffee Lab |
 | Tagline | *(pending)* |
 | Industry | Specialty Coffee / Cold Brew Manufacturing |
@@ -68,7 +68,7 @@
 
 ### Wordmark
 - Typeface: Custom decorative serif (Didone style with swashes)
-- Text: "Co.Salento"
+- Text: "Salentino"
 - Variants: Negro (black), Beige (cream #F0E2C8), Café (brown)
 
 ### Symbol
@@ -82,7 +82,7 @@
 - Print/PDF: Full wordmark
 
 ### Clear Space
-- Minimum clear space: 1x height of the "o" in "Co" on all sides
+- Minimum clear space: 1x height of the "o" in "Salentino" on all sides
 
 ## 5. Tone of Voice
 
