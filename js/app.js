@@ -537,6 +537,161 @@ function closeSidebar() {
   document.getElementById('sidebar-overlay').classList.remove('visible');
 }
 
+// ─── Notifications ──────────────────────────
+function getNotifications() {
+  const notifs = [];
+  const now = new Date();
+
+  // NC abiertas
+  const ncOpen = Store.getRecords('no_conformidad').filter(r => r.data?.verificacion === 'Pendiente');
+  ncOpen.forEach(r => {
+    const isOverdue = r.data?.fecha_limite && new Date(r.data.fecha_limite) < now;
+    notifs.push({
+      icon: 'lucide-alert-triangle',
+      color: isOverdue ? 'red' : 'amber',
+      text: isOverdue
+        ? `NC vencida: "${r.data.nc_detectada}" — fecha límite ${formatDate(r.data.fecha_limite)}`
+        : `NC pendiente: "${r.data.nc_detectada}" — responsable: ${r.data.responsable || '—'}`,
+      time: r.createdAt,
+      action: 'form/no_conformidad',
+      unread: true
+    });
+  });
+
+  // Recordatorios de formatos pendientes hoy
+  const todayStr = today();
+  const todayRecords = {};
+  for (const key of Object.keys(FORMS)) {
+    todayRecords[key] = Store.getRecords(key).filter(r => r.createdAt?.startsWith(todayStr)).length;
+  }
+
+  if (!todayRecords.limpieza) {
+    notifs.push({
+      icon: 'lucide-sparkles', color: 'blue',
+      text: 'Limpieza pre-producción no registrada hoy',
+      time: new Date(todayStr + 'T06:00:00').toISOString(),
+      action: 'form/limpieza', unread: true
+    });
+  }
+
+  if (!todayRecords.ingreso_planta) {
+    notifs.push({
+      icon: 'lucide-door-open', color: 'blue',
+      text: 'Ingreso a planta no registrado hoy',
+      time: new Date(todayStr + 'T06:00:00').toISOString(),
+      action: 'form/ingreso_planta', unread: true
+    });
+  }
+
+  // Próximas actividades programadas
+  notifs.push({
+    icon: 'lucide-bug', color: 'amber',
+    text: 'Inspección de plagas programada para el 05 Sep',
+    time: '2026-09-01T08:00:00.000Z',
+    action: 'form/plagas', unread: false
+  });
+
+  notifs.push({
+    icon: 'lucide-droplets', color: 'blue',
+    text: 'Verificación de agua y filtración el 08 Sep',
+    time: '2026-09-01T08:00:00.000Z',
+    action: 'form/agua_filtracion', unread: false
+  });
+
+  notifs.push({
+    icon: 'lucide-graduation-cap', color: 'green',
+    text: 'Capacitación BPM programada para el 10 Sep — todo el personal',
+    time: '2026-09-01T08:00:00.000Z',
+    action: 'form/capacitacion', unread: false
+  });
+
+  // Sort: unread first, then by time
+  notifs.sort((a, b) => (b.unread - a.unread) || (new Date(b.time) - new Date(a.time)));
+  return notifs;
+}
+
+function initNotifications() {
+  const btn = document.getElementById('notif-btn');
+  const badge = document.getElementById('notif-badge');
+
+  // Create dropdown
+  const dropdown = document.createElement('div');
+  dropdown.className = 'notif-dropdown';
+  dropdown.id = 'notif-dropdown';
+  btn.parentElement.style.position = 'relative';
+  btn.parentElement.appendChild(dropdown);
+
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = dropdown.classList.toggle('open');
+    if (isOpen) renderNotifDropdown();
+  });
+
+  // Close on outside click
+  document.addEventListener('click', (e) => {
+    if (!dropdown.contains(e.target) && e.target !== btn) {
+      dropdown.classList.remove('open');
+    }
+  });
+
+  updateNotifBadge();
+}
+
+function updateNotifBadge() {
+  const notifs = getNotifications();
+  const unreadCount = notifs.filter(n => n.unread).length;
+  const badge = document.getElementById('notif-badge');
+  if (unreadCount > 0) {
+    badge.textContent = unreadCount;
+    badge.style.display = 'flex';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function renderNotifDropdown() {
+  const dropdown = document.getElementById('notif-dropdown');
+  const notifs = getNotifications();
+
+  dropdown.innerHTML = `
+    <div class="notif-header">
+      <h4><i class="lucide-bell" style="margin-right:6px;font-size:0.9rem;color:var(--brand-copper);"></i>Notificaciones</h4>
+      <button class="notif-mark-read" onclick="markAllRead()"><i class="lucide-check-check" style="margin-right:3px;font-size:0.75rem;"></i>Marcar leídas</button>
+    </div>
+    <div class="notif-list">
+      ${notifs.length === 0 ? `
+        <div class="notif-empty">
+          <i class="lucide-bell-off" style="font-size:24px;display:block;margin-bottom:8px;"></i>
+          Sin notificaciones
+        </div>
+      ` : notifs.map(n => `
+        <div class="notif-item ${n.unread ? 'unread' : ''}" onclick="handleNotifClick('${n.action}')">
+          <div class="notif-icon ${n.color}"><i class="${n.icon}"></i></div>
+          <div class="notif-body">
+            <div class="notif-text">${n.text}</div>
+            <div class="notif-time"><i class="lucide-clock" style="margin-right:3px;font-size:0.65rem;"></i>${formatDateTime(n.time)}</div>
+          </div>
+          ${n.unread ? '<div class="notif-dot"></div>' : ''}
+        </div>
+      `).join('')}
+    </div>
+  `;
+  renderIcons(dropdown);
+}
+
+window.handleNotifClick = function(action) {
+  document.getElementById('notif-dropdown').classList.remove('open');
+  Router.navigate(action);
+};
+
+window.markAllRead = function() {
+  // In production this would update Firestore; for prototype just close
+  document.getElementById('notif-badge').style.display = 'none';
+  document.querySelectorAll('.notif-item.unread').forEach(el => el.classList.remove('unread'));
+  document.querySelectorAll('.notif-dot').forEach(el => el.remove());
+  showToast('Notificaciones marcadas como leídas');
+};
+
 // ─── Toast ───────────────────────────────────
 function showToast(message, type = 'success') {
   const container = document.getElementById('toast-container');
@@ -1570,6 +1725,7 @@ function initCharts() {
 document.addEventListener('DOMContentLoaded', () => {
   buildNav();
   initSidebar();
+  initNotifications();
   Router.init();
 
   // Seed demo data if empty
