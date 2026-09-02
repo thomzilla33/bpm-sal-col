@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#5D2E0C">
+  <title>Salentino BPM</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" type="image/svg+xml" href="icons/icon-192.svg">
+  <link rel="apple-touch-icon" href="icons/icon-192.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/lucide-static@latest/font/lucide.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <div id="app">
+    <!-- Sidebar (desktop) -->
+    <aside id="sidebar" class="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">
+          <span class="logo-icon">&#9749;</span>
+          <div class="logo-text">
+            <strong>Salentino</strong>
+            <small>Coffee Lab BPM</small>
+          </div>
+        </div>
+      </div>
+      <nav class="sidebar-nav" id="sidebar-nav"></nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="avatar">OP</div>
+          <div>
+            <div class="user-name">Operario</div>
+            <div class="user-role">Planta de Producción</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-wrapper">
+      <!-- Top bar (mobile) -->
+      <header class="topbar" id="topbar">
+        <button class="menu-btn" id="menu-btn" aria-label="Menú">
+          <i class="lucide-menu"></i>
+        </button>
+        <h1 class="topbar-title" id="topbar-title">Dashboard</h1>
+        <button class="notif-btn" id="notif-btn" aria-label="Notificaciones">
+          <i class="lucide-bell"></i>
+          <span class="notif-badge" id="notif-badge">3</span>
+        </button>
+      </header>
+
+      <!-- Page Content -->
+      <main class="content" id="content"></main>
+
+      <!-- Bottom Nav (mobile) -->
+      <nav class="bottom-nav" id="bottom-nav"></nav>
+    </div>
+
+    <!-- Overlay for mobile sidebar -->
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+    <!-- Toast container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal container -->
+    <div class="modal-overlay" id="modal-overlay">
+      <div class="modal" id="modal"></div>
+    </div>
+  </div>
+
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+  <script>
+    // Register Service Worker for offline support
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./sw.js')
+        .then(reg => console.log('SW registered:', reg.scope))
+        .catch(err => console.warn('SW registration failed:', err));
+    }
+    // Initialize Firebase (async, non-blocking)
+    initFirebase().then(ready => {
+      if (ready) document.body.dataset.firebase = 'connected';
+    });
+  </script>
+</body>
+</html>

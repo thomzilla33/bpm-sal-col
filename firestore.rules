@@ -1,0 +1,53 @@
+// ─── Firestore Security Rules ────────────────
+// Deploy with: firebase deploy --only firestore:rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper: check if user is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: check user role
+    function hasRole(role) {
+      return isAuth() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == role;
+    }
+
+    function isAdmin() { return hasRole('admin'); }
+    function isSupervisor() { return hasRole('supervisor') || isAdmin(); }
+    function isOperario() { return isAuth(); } // any authenticated user
+
+    // Users collection
+    match /users/{userId} {
+      allow read: if isAuth();
+      allow write: if isAdmin() || request.auth.uid == userId;
+    }
+
+    // Records collection (all 13 formats)
+    match /records/{formId}/entries/{entryId} {
+      // Anyone authenticated can read records
+      allow read: if isAuth();
+      // Operarios can create records
+      allow create: if isOperario();
+      // Only supervisors+ can update (for verification, corrections)
+      allow update: if isSupervisor();
+      // Only admins can delete (audit trail — prefer soft delete)
+      allow delete: if isAdmin();
+    }
+
+    // Catalogs (areas, equipos, productos)
+    match /catalogs/{catalogId} {
+      allow read: if isAuth();
+      allow write: if isSupervisor();
+    }
+
+    // Audit log (immutable)
+    match /audit/{logId} {
+      allow read: if isSupervisor();
+      allow create: if isAuth();
+      // Never allow update or delete
+      allow update, delete: if false;
+    }
+  }
+}

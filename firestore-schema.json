@@ -1,0 +1,104 @@
+{
+  "_description": "Esquema de referencia para Firestore — Salentino BPM",
+  "_note": "Firestore es NoSQL, este archivo documenta la estructura esperada de los documentos",
+
+  "collections": {
+    "users": {
+      "_path": "/users/{userId}",
+      "fields": {
+        "email": "string",
+        "name": "string",
+        "role": "admin | supervisor | operario",
+        "createdAt": "timestamp",
+        "active": "boolean"
+      }
+    },
+
+    "records/{formId}/entries": {
+      "_path": "/records/{formId}/entries/{entryId}",
+      "_description": "Subcollection por cada tipo de formato. formId = limpieza | desinfeccion | inventario_ld | ingreso_planta | no_conformidad | residuos | plagas | agua_filtracion | mantenimiento | produccion_lote | control_temp | muestreo | capacitacion",
+      "fields": {
+        "formId": "string (matches parent formId)",
+        "createdAt": "string (ISO 8601)",
+        "serverTimestamp": "timestamp (auto)",
+        "createdBy": "string (userId)",
+        "data": {
+          "_description": "Object con campos específicos de cada formato",
+          "_examples": {
+            "limpieza": {
+              "fecha_produccion": "2026-09-02",
+              "lote_produccion": "SCL-2026-0902-001",
+              "hora_inicio": "07:00",
+              "hora_fin": "07:45",
+              "operario": "Juan Pérez",
+              "table_rows": "array of {area, producto, tecnica, frecuencia}"
+            },
+            "produccion_lote": {
+              "fecha": "2026-09-02",
+              "lote": "SCL-2026-0902-001",
+              "cafe_utilizado": "Colombia Huila - Castillo",
+              "agua_utilizada": "20",
+              "tiempo": "18 horas",
+              "cant_producida": "15",
+              "cant_botellas": "50"
+            },
+            "no_conformidad": {
+              "fecha_hora": "2026-09-02T10:30",
+              "area_equipo": "Área de producción",
+              "nc_detectada": "Filtro con sedimentos",
+              "causa_posible": "No se cambió en fecha",
+              "accion_inmediata": "Cambio inmediato",
+              "accion_correctiva": "Alerta automática",
+              "responsable": "Carlos Supervisor",
+              "fecha_limite": "2026-09-10",
+              "verificacion": "Pendiente | Sí | No",
+              "resultado_verificacion": "string"
+            }
+          }
+        },
+        "signatureUrl": "string (Storage URL, nullable)",
+        "photoUrls": "array of string (Storage URLs, nullable)"
+      }
+    },
+
+    "catalogs": {
+      "_path": "/catalogs/{catalogId}",
+      "_catalogIds": ["areas", "equipos", "productos_ld", "proveedores"],
+      "fields": {
+        "items": "array of { id, name, type, active, ... }"
+      }
+    },
+
+    "audit": {
+      "_path": "/audit/{logId}",
+      "_description": "Inmutable. Registra cada operación sobre records.",
+      "fields": {
+        "userId": "string",
+        "action": "create | update | delete",
+        "collection": "string",
+        "documentId": "string",
+        "timestamp": "timestamp",
+        "before": "object (snapshot before change, nullable)",
+        "after": "object (snapshot after change)"
+      }
+    }
+  },
+
+  "indexes": [
+    {
+      "collection": "records/{formId}/entries",
+      "fields": ["createdAt DESC"],
+      "description": "List records by most recent"
+    },
+    {
+      "collectionGroup": "entries",
+      "fields": ["createdAt DESC"],
+      "description": "Cross-form query for dashboard"
+    },
+    {
+      "collection": "records/no_conformidad/entries",
+      "fields": ["data.verificacion", "createdAt DESC"],
+      "description": "Filter open non-conformities"
+    }
+  ]
+}
