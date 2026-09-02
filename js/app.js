@@ -2,6 +2,24 @@
    SALENTINO BPM - Application
    ============================================ */
 
+// ─── Lucide Icon Renderer ───────────────────
+// Converts <i class="lucide-xxx ..."> to <i data-lucide="xxx" class="...">
+// then calls lucide.createIcons() to render SVGs
+function renderIcons(root) {
+  const scope = root || document;
+  scope.querySelectorAll('i[class*="lucide-"]').forEach(el => {
+    if (el.dataset.lucide) return; // already converted
+    const cls = [...el.classList].find(c => c.startsWith('lucide-'));
+    if (cls) {
+      el.dataset.lucide = cls.replace('lucide-', '');
+      el.classList.remove(cls);
+    }
+  });
+  if (window.lucide) {
+    lucide.createIcons({ nameAttr: 'data-lucide' });
+  }
+}
+
 // ─── State ───────────────────────────────────
 const Store = {
   _data: JSON.parse(localStorage.getItem('salentino_bpm') || '{}'),
@@ -446,6 +464,7 @@ const Router = {
     initCharts();
     initSignaturePads();
     closeSidebar();
+    renderIcons();
   }
 };
 
@@ -475,6 +494,8 @@ function buildNav() {
       <span>${item.label}</span>
     </button>
   `).join('');
+
+  renderIcons();
 }
 
 function updateNav() {
@@ -524,6 +545,7 @@ function showToast(message, type = 'success') {
   const icons = { success: 'lucide-check-circle', error: 'lucide-x-circle', warning: 'lucide-alert-triangle' };
   toast.innerHTML = `<i class="${icons[type] || 'lucide-info'}"></i> ${message}`;
   container.appendChild(toast);
+  renderIcons(toast);
   setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 300); }, 3000);
 }
 
@@ -1350,6 +1372,7 @@ window.addPerson = function() {
   `;
   container.appendChild(div);
   personCount++;
+  renderIcons(div);
 };
 
 // ─── Signature Pad ───────────────────────────
@@ -1554,6 +1577,9 @@ document.addEventListener('DOMContentLoaded', () => {
     seedDemoData();
     Router.resolve();
   }
+
+  // Render all static icons (sidebar header, topbar)
+  renderIcons();
 });
 
 function seedDemoData() {

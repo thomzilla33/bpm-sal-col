@@ -1,5 +1,5 @@
 // ─── Salentino BPM - Service Worker ──────────
-const CACHE_NAME = 'salentino-bpm-v1';
+const CACHE_NAME = 'salentino-bpm-v2';
 const ASSETS = [
   './',
   './index.html',
@@ -7,8 +7,8 @@ const ASSETS = [
   './js/app.js',
   './js/firebase-config.js',
   './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap',
-  'https://unpkg.com/lucide-static@latest/font/lucide.css',
+  'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap',
+  'https://unpkg.com/lucide@latest/dist/umd/lucide.js',
   'https://cdn.jsdelivr.net/npm/chart.js@4',
 ];
 
