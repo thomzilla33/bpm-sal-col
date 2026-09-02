@@ -594,10 +594,10 @@ function renderDashboard() {
         <h3 class="section-title">Acciones rápidas</h3>
       </div>
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:28px;">
-        ${quickAction('lucide-door-open', 'Ingreso planta', 'ingreso_planta', '#3B82F6')}
-        ${quickAction('lucide-sparkles', 'Limpieza', 'limpieza', '#6366F1')}
-        ${quickAction('lucide-flask-conical', 'Nuevo lote', 'produccion_lote', '#8B4513')}
-        ${quickAction('lucide-alert-triangle', 'No conformidad', 'no_conformidad', '#EF4444')}
+        ${quickAction('lucide-door-open', 'Ingreso planta', 'ingreso_planta', 'var(--info)', 'Registra el ingreso del personal con verificación de EPP')}
+        ${quickAction('lucide-sparkles', 'Limpieza', 'limpieza', 'var(--brand-copper)', 'Registra limpieza pre/post producción')}
+        ${quickAction('lucide-flask-conical', 'Nuevo lote', 'produccion_lote', 'var(--brand-coffee)', 'Inicia un nuevo lote de producción')}
+        ${quickAction('lucide-alert-triangle', 'No conformidad', 'no_conformidad', 'var(--danger)', 'Reporta una desviación o problema detectado')}
       </div>
 
       <!-- Charts -->
@@ -654,11 +654,14 @@ function renderDashboard() {
   `;
 }
 
-function quickAction(icon, label, formId, color) {
+function quickAction(icon, label, formId, color, tooltip) {
   return `
-    <button class="card card-clickable" style="padding:16px;text-align:center;border:none;cursor:pointer;"
-      onclick="Router.navigate('form/${formId}')">
-      <i class="${icon}" style="font-size:28px;color:${color};display:block;margin-bottom:8px;"></i>
+    <button class="card card-clickable" style="padding:16px;text-align:center;border:1.5px solid var(--border);cursor:pointer;"
+      onclick="Router.navigate('form/${formId}')"
+      ${tooltip ? `data-tooltip="${tooltip}"` : ''}>
+      <div style="width:44px;height:44px;border-radius:var(--radius-sm);background:color-mix(in srgb, ${color} 12%, transparent);color:${color};display:flex;align-items:center;justify-content:center;margin:0 auto 8px;">
+        <i class="${icon}" style="font-size:24px;"></i>
+      </div>
       <div style="font-size:0.82rem;font-weight:600;color:var(--text);">${label}</div>
     </button>
   `;
@@ -708,19 +711,23 @@ function renderFormatos() {
         ${PROGRAMS.map(prog => `
           <div class="category-card">
             <div class="category-header">
-              <i class="${prog.icon}" style="color:var(--${colorClass(prog.color) === 'brown' ? 'primary' : colorClass(prog.color)});"></i>
+              <i class="${prog.icon}"></i>
               <h3>${prog.name}</h3>
-              <span class="cat-count">${prog.forms.length}</span>
+              <span class="cat-count">${prog.forms.length} formatos</span>
             </div>
             <div class="category-items">
               ${prog.forms.map(fId => {
                 const f = FORMS[fId];
+                const recCount = Store.getRecords(fId).length;
                 return `
-                  <button class="cat-item" onclick="Router.navigate('form/${fId}')">
-                    <i class="${f.icon}" style="color:var(--text-muted);"></i>
-                    <span class="ci-name">${f.title}</span>
-                    <span class="ci-code">${f.code}</span>
-                    <i class="lucide-chevron-right"></i>
+                  <button class="cat-item" onclick="Router.navigate('form/${fId}')"
+                    data-tooltip="${f.title} — ${f.code}">
+                    <div class="ci-icon"><i class="${f.icon}"></i></div>
+                    <div class="ci-info">
+                      <span class="ci-name">${f.title}</span>
+                      <span class="ci-code">${f.code}${recCount ? ` · ${recCount} registros` : ''}</span>
+                    </div>
+                    <i class="lucide-chevron-right ci-arrow"></i>
                   </button>`;
               }).join('')}
             </div>
@@ -1402,7 +1409,7 @@ function initCharts() {
         labels: PROGRAMS.map(p => p.name.split(' ')[0]),
         datasets: [{
           data: PROGRAMS.map(p => p.forms.reduce((sum, f) => sum + Store.getRecords(f).length, 0) || 1),
-          backgroundColor: ['#3B82F6', '#8B4513', '#EF4444', '#F59E0B', '#16A34A'],
+          backgroundColor: ['#3B6B9E', '#6B3A2A', '#C1292E', '#D4870E', '#2D6A4F'],
           borderWidth: 0,
           borderRadius: 4,
         }]
@@ -1441,7 +1448,7 @@ function initCharts() {
         datasets: [{
           label: 'Registros',
           data: counts,
-          backgroundColor: '#D4A574',
+          backgroundColor: '#B8652A',
           borderRadius: 6,
           borderSkipped: false,
         }]
@@ -1466,8 +1473,8 @@ function initCharts() {
       data: {
         labels: ['L&D', 'Producción', 'Calidad', 'Soporte', 'Capacitación'],
         datasets: [
-          { label: 'Completado', data: [85, 92, 70, 65, 80], backgroundColor: '#16A34A', borderRadius: 4 },
-          { label: 'Pendiente', data: [15, 8, 30, 35, 20], backgroundColor: '#F59E0B', borderRadius: 4 },
+          { label: 'Completado', data: [85, 92, 70, 65, 80], backgroundColor: '#2D6A4F', borderRadius: 4 },
+          { label: 'Pendiente', data: [15, 8, 30, 35, 20], backgroundColor: '#D4870E', borderRadius: 4 },
         ]
       },
       options: {
