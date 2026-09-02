@@ -922,8 +922,8 @@ function renderProduccion() {
 
   return `
     <div class="fade-in">
-      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
-        <div>
+      <div class="page-header-row">
+        <div style="min-width:0;">
           <h2 style="font-size:1.3rem;font-weight:800;margin-bottom:4px;"><i class="lucide-flask-conical" style="margin-right:6px;color:var(--brand-copper);"></i>Producción</h2>
           <p style="color:var(--text-secondary);font-size:0.85rem;"><i class="lucide-git-branch" style="margin-right:4px;font-size:0.8rem;"></i>Control de lotes, temperatura y muestreo</p>
         </div>

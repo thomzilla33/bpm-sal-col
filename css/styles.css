@@ -530,6 +530,14 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
   padding: 20px;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+/* Prevent any child from causing horizontal overflow */
+.content > * {
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 /* ============================================
@@ -647,6 +655,16 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
   font-size: 0.78rem;
   color: var(--text-secondary);
   font-weight: 500;
+}
+
+/* Page header with action button */
+.page-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
 }
 
 /* Quick actions grid */
@@ -772,6 +790,8 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
   font-size: 1.3rem;
   font-weight: 800;
   margin-bottom: 4px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
 }
 
 .form-page-header .form-code {
@@ -1656,37 +1676,26 @@ input, select, textarea { font-family: inherit; font-size: 1rem; }
     font-size: 16px; /* Prevents iOS zoom on focus */
   }
 
-  /* ── Tables: horizontal scroll with visual hint ── */
+  /* ── Tables: stay native, wrapper handles scroll ── */
   .form-table {
     font-size: 0.75rem;
-    display: block;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    white-space: nowrap;
+    min-width: 520px; /* force scroll on narrow screens */
   }
 
-  .form-table thead,
-  .form-table tbody,
-  .form-table tr { display: table; width: 100%; table-layout: auto; }
-  .form-table thead { display: table-header-group; }
-  .form-table tbody { display: table-row-group; }
-
   .form-table thead th {
-    padding: 8px 8px;
+    padding: 8px 6px;
     font-size: 0.68rem;
-    white-space: nowrap;
   }
 
   .form-table tbody td {
-    padding: 6px 6px;
-    white-space: nowrap;
+    padding: 6px;
   }
 
   .form-table .table-input,
   .form-table .table-select {
     font-size: 16px;
     padding: 8px 6px;
-    min-width: 80px;
+    min-width: 70px;
   }
 
   .form-check { padding: 14px; min-height: 48px; }
