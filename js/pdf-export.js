@@ -360,181 +360,191 @@ function renderVerificationPDF(doc, config, data, y, margin) {
 
 // ─── Export: single record ──────────────────
 window.exportRecordPDF = function(formId, recordId) {
-  const form = FORMS[formId];
-  if (!form) { showToast('Formato no encontrado', 'error'); return; }
+  try {
+    if (!window.jspdf) { showToast('Error: jsPDF no cargó. Verifica tu conexión a internet.', 'error'); return; }
+    const form = FORMS[formId];
+    if (!form) { showToast('Formato no encontrado', 'error'); return; }
 
-  const records = Store.getRecords(formId);
-  const record = records.find(r => r.id === recordId);
-  if (!record) { showToast('Registro no encontrado', 'error'); return; }
+    const records = Store.getRecords(formId);
+    const record = records.find(r => r.id === recordId);
+    if (!record) { showToast('Registro no encontrado', 'error'); return; }
 
-  const doc = buildRecordPDF(form, record);
-  const dateStr = new Date().toISOString().slice(0, 10);
-  doc.save(`Salentino_${form.code}_${dateStr}.pdf`);
-  showToast('PDF descargado correctamente');
+    const doc = buildRecordPDF(form, record);
+    const dateStr = new Date().toISOString().slice(0, 10);
+    doc.save(`Salentino_${form.code}_${dateStr}.pdf`);
+    showToast('PDF descargado correctamente');
+  } catch (err) {
+    console.error('PDF export error:', err);
+    showToast('Error al generar PDF: ' + err.message, 'error');
+  }
 };
 
 // ─── Export: all records for a period ───────
 window.exportAllPDF = function() {
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: 'portrait', format: 'a4', unit: 'mm' });
-  const pageW = doc.internal.pageSize.getWidth();
-  const margin = 15;
-  let isFirstPage = true;
+  try {
+    if (!window.jspdf) { showToast('Error: jsPDF no cargó. Verifica tu conexión a internet.', 'error'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ orientation: 'portrait', format: 'a4', unit: 'mm' });
+    const pageW = doc.internal.pageSize.getWidth();
+    const margin = 15;
 
-  // Collect all records
-  const allRecords = [];
-  for (const key of Object.keys(FORMS)) {
-    Store.getRecords(key).forEach(r => {
-      allRecords.push({ ...r, formId: key });
-    });
-  }
-  allRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-
-  if (allRecords.length === 0) {
-    showToast('No hay registros para exportar', 'warning');
-    return;
-  }
-
-  // Cover page
-  doc.setFillColor(...PDF_BRAND.coffee);
-  doc.rect(0, 0, pageW, doc.internal.pageSize.getHeight(), 'F');
-
-  doc.setTextColor(...PDF_BRAND.beige);
-  doc.setFontSize(28);
-  doc.setFont('helvetica', 'bold');
-  doc.text('SALENTINO', pageW / 2, 80, { align: 'center' });
-  doc.setFontSize(14);
-  doc.text('COFFEE LAB', pageW / 2, 90, { align: 'center' });
-
-  doc.setFillColor(...PDF_BRAND.copper);
-  doc.rect(pageW / 2 - 30, 96, 60, 1, 'F');
-
-  doc.setFontSize(18);
-  doc.setTextColor(...PDF_BRAND.white);
-  doc.text('Registros BPM', pageW / 2, 115, { align: 'center' });
-
-  doc.setFontSize(11);
-  doc.setTextColor(...PDF_BRAND.beige);
-  const dateRange = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
-  doc.text(`Generado: ${dateRange}`, pageW / 2, 128, { align: 'center' });
-  doc.text(`Total registros: ${allRecords.length}`, pageW / 2, 136, { align: 'center' });
-
-  doc.setFontSize(8);
-  doc.setTextColor(...PDF_BRAND.copper);
-  doc.text('Salento, Quindío, Colombia', pageW / 2, 260, { align: 'center' });
-
-  // Summary table page
-  doc.addPage();
-  let y = margin;
-
-  doc.setFontSize(14);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(...PDF_BRAND.coffee);
-  doc.text('Resumen de Registros', margin, y);
-  y += 8;
-
-  // Summary by program
-  const summaryBody = [];
-  for (const key of Object.keys(FORMS)) {
-    const count = Store.getRecords(key).length;
-    if (count > 0) {
-      summaryBody.push([FORMS[key].code, FORMS[key].title, String(count)]);
+    // Collect all records
+    const allRecords = [];
+    for (const key of Object.keys(FORMS)) {
+      Store.getRecords(key).forEach(r => {
+        allRecords.push({ ...r, formId: key });
+      });
     }
-  }
+    allRecords.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
-  doc.autoTable({
-    startY: y,
-    head: [['Código', 'Formato', 'Registros']],
-    body: summaryBody,
-    margin: { left: margin, right: margin },
-    headStyles: { fillColor: PDF_BRAND.coffee, textColor: PDF_BRAND.white, fontSize: 9 },
-    bodyStyles: { fontSize: 9, textColor: PDF_BRAND.black, cellPadding: 4 },
-    alternateRowStyles: { fillColor: PDF_BRAND.cream },
-    theme: 'grid',
-    styles: { lineColor: PDF_BRAND.beige, lineWidth: 0.3 },
-    columnStyles: {
-      0: { fontStyle: 'bold', cellWidth: 30 },
-      2: { halign: 'center', cellWidth: 25 },
-    },
-  });
+    if (allRecords.length === 0) {
+      showToast('No hay registros para exportar. Llena un formulario primero.', 'warning');
+      return;
+    }
 
-  // Individual records
-  allRecords.forEach(record => {
-    doc.addPage();
-    const form = FORMS[record.formId];
-    // Reuse buildRecordPDF logic but append to existing doc
-    const tempDoc = buildRecordPDF(form, record);
-    // Can't easily merge jsPDF docs, so we rebuild inline
-
-    const pw = doc.internal.pageSize.getWidth();
-    let ry = margin;
-
-    // Mini header
+    // Cover page
     doc.setFillColor(...PDF_BRAND.coffee);
-    doc.rect(0, 0, pw, 22, 'F');
-    doc.setTextColor(...PDF_BRAND.white);
-    doc.setFontSize(11);
+    doc.rect(0, 0, pageW, doc.internal.pageSize.getHeight(), 'F');
+
+    doc.setTextColor(...PDF_BRAND.beige);
+    doc.setFontSize(28);
     doc.setFont('helvetica', 'bold');
-    doc.text(`${form.code} — ${form.title}`, margin, 10);
-    doc.setFontSize(8);
-    doc.setFont('helvetica', 'normal');
-    const recDate = record.createdAt ? new Date(record.createdAt).toLocaleString('es-CO') : '—';
-    doc.text(`Registrado: ${recDate}`, margin, 16);
+    doc.text('SALENTINO', pageW / 2, 80, { align: 'center' });
+    doc.setFontSize(14);
+    doc.text('COFFEE LAB', pageW / 2, 90, { align: 'center' });
 
     doc.setFillColor(...PDF_BRAND.copper);
-    doc.rect(0, 22, pw, 1, 'F');
-    ry = 30;
+    doc.rect(pageW / 2 - 30, 96, 60, 1, 'F');
 
-    // Fields
-    const data = record.data || {};
-    const pairs = [];
-    form.fields.forEach(f => {
-      const val = data[f.name];
-      if (val !== undefined && val !== '') pairs.push([f.label, String(val)]);
-    });
+    doc.setFontSize(18);
+    doc.setTextColor(...PDF_BRAND.white);
+    doc.text('Registros BPM', pageW / 2, 115, { align: 'center' });
 
-    if (pairs.length > 0) {
+    doc.setFontSize(11);
+    doc.setTextColor(...PDF_BRAND.beige);
+    const dateRange = new Date().toLocaleDateString('es-CO', { day: 'numeric', month: 'long', year: 'numeric' });
+    doc.text(`Generado: ${dateRange}`, pageW / 2, 128, { align: 'center' });
+    doc.text(`Total registros: ${allRecords.length}`, pageW / 2, 136, { align: 'center' });
+
+    doc.setFontSize(8);
+    doc.setTextColor(...PDF_BRAND.copper);
+    doc.text('Salento, Quindío, Colombia', pageW / 2, 260, { align: 'center' });
+
+    // Summary table page
+    doc.addPage();
+    let y = margin;
+
+    doc.setFontSize(14);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(...PDF_BRAND.coffee);
+    doc.text('Resumen de Registros', margin, y);
+    y += 8;
+
+    const summaryBody = [];
+    for (const key of Object.keys(FORMS)) {
+      const count = Store.getRecords(key).length;
+      if (count > 0) {
+        summaryBody.push([FORMS[key].code, FORMS[key].title, String(count)]);
+      }
+    }
+
+    if (summaryBody.length > 0) {
       doc.autoTable({
-        startY: ry,
-        head: [['Campo', 'Valor']],
-        body: pairs,
+        startY: y,
+        head: [['Código', 'Formato', 'Registros']],
+        body: summaryBody,
         margin: { left: margin, right: margin },
-        headStyles: { fillColor: PDF_BRAND.coffee, textColor: PDF_BRAND.white, fontSize: 8 },
-        bodyStyles: { fontSize: 8, textColor: PDF_BRAND.black, cellPadding: 3 },
+        headStyles: { fillColor: PDF_BRAND.coffee, textColor: PDF_BRAND.white, fontSize: 9 },
+        bodyStyles: { fontSize: 9, textColor: PDF_BRAND.black, cellPadding: 4 },
         alternateRowStyles: { fillColor: PDF_BRAND.cream },
         theme: 'grid',
         styles: { lineColor: PDF_BRAND.beige, lineWidth: 0.3 },
-        columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55, textColor: PDF_BRAND.coffee } },
+        columnStyles: {
+          0: { fontStyle: 'bold', cellWidth: 30 },
+          2: { halign: 'center', cellWidth: 25 },
+        },
       });
-      ry = doc.lastAutoTable.finalY + 6;
     }
 
-    // Table data
-    if (form.tableFields) {
-      ry = renderTableFieldsPDF(doc, form.tableFields, data, ry, margin, pw - margin * 2);
-    }
-  });
+    // Individual records
+    allRecords.forEach(record => {
+      doc.addPage();
+      const form = FORMS[record.formId];
+      if (!form) return;
 
-  // Footers on all pages
-  const total = doc.internal.getNumberOfPages();
-  for (let i = 1; i <= total; i++) {
-    doc.setPage(i);
-    const ph = doc.internal.pageSize.getHeight();
-    if (i > 1) { // skip cover page footer
-      doc.setDrawColor(...PDF_BRAND.beige);
-      doc.setLineWidth(0.5);
-      doc.line(margin, ph - 12, pageW - margin, ph - 12);
-      doc.setFontSize(7);
+      const pw = doc.internal.pageSize.getWidth();
+      let ry = margin;
+
+      // Mini header
+      doc.setFillColor(...PDF_BRAND.coffee);
+      doc.rect(0, 0, pw, 22, 'F');
+      doc.setTextColor(...PDF_BRAND.white);
+      doc.setFontSize(11);
+      doc.setFont('helvetica', 'bold');
+      doc.text(`${form.code} — ${form.title}`, margin, 10);
+      doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
-      doc.setTextColor(...PDF_BRAND.muted);
-      doc.text('Salentino Coffee Lab S.A.S. · Salento, Quindío, Colombia', margin, ph - 8);
-      doc.text(`Página ${i} de ${total}`, pageW - margin, ph - 8, { align: 'right' });
-    }
-  }
+      const recDate = record.createdAt ? new Date(record.createdAt).toLocaleString('es-CO') : '—';
+      doc.text(`Registrado: ${recDate}`, margin, 16);
 
-  const dateStr = new Date().toISOString().slice(0, 10);
-  doc.save(`Salentino_BPM_Registros_${dateStr}.pdf`);
-  showToast('PDF completo descargado');
+      doc.setFillColor(...PDF_BRAND.copper);
+      doc.rect(0, 22, pw, 1, 'F');
+      ry = 30;
+
+      // Fields
+      const data = record.data || {};
+      const pairs = [];
+      (form.fields || []).forEach(f => {
+        const val = data[f.name];
+        if (val !== undefined && val !== '') pairs.push([f.label, String(val)]);
+      });
+
+      if (pairs.length > 0) {
+        doc.autoTable({
+          startY: ry,
+          head: [['Campo', 'Valor']],
+          body: pairs,
+          margin: { left: margin, right: margin },
+          headStyles: { fillColor: PDF_BRAND.coffee, textColor: PDF_BRAND.white, fontSize: 8 },
+          bodyStyles: { fontSize: 8, textColor: PDF_BRAND.black, cellPadding: 3 },
+          alternateRowStyles: { fillColor: PDF_BRAND.cream },
+          theme: 'grid',
+          styles: { lineColor: PDF_BRAND.beige, lineWidth: 0.3 },
+          columnStyles: { 0: { fontStyle: 'bold', cellWidth: 55, textColor: PDF_BRAND.coffee } },
+        });
+        ry = doc.lastAutoTable.finalY + 6;
+      }
+
+      // Table data
+      if (form.tableFields) {
+        ry = renderTableFieldsPDF(doc, form.tableFields, data, ry, margin, pw - margin * 2);
+      }
+    });
+
+    // Footers on all pages
+    const total = doc.internal.getNumberOfPages();
+    for (let i = 1; i <= total; i++) {
+      doc.setPage(i);
+      const ph = doc.internal.pageSize.getHeight();
+      if (i > 1) {
+        doc.setDrawColor(...PDF_BRAND.beige);
+        doc.setLineWidth(0.5);
+        doc.line(margin, ph - 12, pageW - margin, ph - 12);
+        doc.setFontSize(7);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(...PDF_BRAND.muted);
+        doc.text('Salentino Coffee Lab S.A.S. · Salento, Quindío, Colombia', margin, ph - 8);
+        doc.text(`Página ${i} de ${total}`, pageW - margin, ph - 8, { align: 'right' });
+      }
+    }
+
+    const dateStr = new Date().toISOString().slice(0, 10);
+    doc.save(`Salentino_BPM_Registros_${dateStr}.pdf`);
+    showToast('PDF completo descargado');
+  } catch (err) {
+    console.error('PDF export error:', err);
+    showToast('Error al generar PDF: ' + err.message, 'error');
+  }
 };
 
 // ─── Export: audit package ──────────────────

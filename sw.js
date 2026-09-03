@@ -1,5 +1,5 @@
 // ─── Salentino BPM - Service Worker ──────────
-const CACHE_NAME = 'salentino-bpm-v4';
+const CACHE_NAME = 'salentino-bpm-v5';
 const ASSETS = [
   './',
   './index.html',
@@ -11,8 +11,8 @@ const ASSETS = [
   'https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap',
   'https://unpkg.com/lucide@latest/dist/umd/lucide.js',
   'https://cdn.jsdelivr.net/npm/chart.js@4',
-  'https://cdn.jsdelivr.net/npm/jspdf@2.5.2',
-  'https://cdn.jsdelivr.net/npm/jspdf-autotable@3.6.1',
+  'https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js',
+  'https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js',
 ];
 
 // Install: cache all static assets
