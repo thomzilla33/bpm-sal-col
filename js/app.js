@@ -1244,7 +1244,7 @@ function renderFormPage(params) {
       data[check.dataset.name] = check.classList.contains('checked') ? 'Sí' : 'No';
     });
 
-    Store.addRecord(formId, { data });
+    HybridStore.addRecord(formId, { data });
     showToast(`${form.title} guardado correctamente`);
     setTimeout(() => Router.navigate('registros'), 500);
   });

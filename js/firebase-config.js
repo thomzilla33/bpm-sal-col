@@ -13,17 +13,16 @@
    ============================================ */
 
 const FIREBASE_CONFIG = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBlZ_2FYSS3_QxvEDpUqC5VUeJ4iM7figs",
   authDomain: "salentino-bpm.firebaseapp.com",
   projectId: "salentino-bpm",
   storageBucket: "salentino-bpm.firebasestorage.app",
-  messagingSenderId: "000000000000",
-  appId: "YOUR_APP_ID"
+  messagingSenderId: "501254428011",
+  appId: "1:501254428011:web:68323fde70d192cf0ce82e"
 };
 
 // ─── Firebase Mode Toggle ────────────────────
-// Set to true once you've configured Firebase above
-const USE_FIREBASE = false;
+const USE_FIREBASE = true;
 
 // ─── Firebase Initialization ─────────────────
 let db = null;
