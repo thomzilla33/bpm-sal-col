@@ -1532,8 +1532,15 @@ window.addPerson = function() {
 
 // ─── Signature Pad ───────────────────────────
 let sigCanvas, sigCtx, sigDrawing = false;
+let sigResizeHandler = null;
 
 function initSignaturePads() {
+  // Remove old resize listener if exists
+  if (sigResizeHandler) {
+    window.removeEventListener('resize', sigResizeHandler);
+    sigResizeHandler = null;
+  }
+
   sigCanvas = document.getElementById('sig-canvas');
   if (!sigCanvas) return;
 
@@ -1541,6 +1548,7 @@ function initSignaturePads() {
   sigCtx = sigCanvas.getContext('2d');
 
   function resize() {
+    if (!sigCanvas || !pad || !document.contains(sigCanvas)) return;
     const rect = pad.getBoundingClientRect();
     sigCanvas.width = rect.width;
     sigCanvas.height = rect.height;
@@ -1550,7 +1558,8 @@ function initSignaturePads() {
     sigCtx.lineJoin = 'round';
   }
   resize();
-  window.addEventListener('resize', resize);
+  sigResizeHandler = resize;
+  window.addEventListener('resize', sigResizeHandler);
 
   function getPos(e) {
     const rect = sigCanvas.getBoundingClientRect();

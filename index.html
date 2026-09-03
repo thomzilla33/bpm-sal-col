@@ -85,7 +85,12 @@
     }
     // Initialize Firebase (async, non-blocking)
     initFirebase().then(ready => {
-      if (ready) document.body.dataset.firebase = 'connected';
+      if (ready) {
+        document.body.dataset.firebase = 'connected';
+        console.log('🟢 Firebase CONECTADO — los datos se guardan en la nube');
+      } else {
+        console.warn('🔴 Firebase NO conectado — los datos solo se guardan localmente');
+      }
     });
   </script>
 </body>
