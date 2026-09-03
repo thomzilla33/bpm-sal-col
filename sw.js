@@ -1,5 +1,5 @@
 // ─── Salentino BPM - Service Worker ──────────
-const CACHE_NAME = 'salentino-bpm-v5';
+const CACHE_NAME = 'salentino-bpm-v6';
 const ASSETS = [
   './',
   './index.html',
