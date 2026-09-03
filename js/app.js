@@ -1038,6 +1038,9 @@ function renderRegistros() {
               <div class="ri-title">${r.formTitle}</div>
               <div class="ri-meta">${r.formCode} · ${formatDateTime(r.createdAt)}</div>
             </div>
+            <button class="btn-icon" onclick="event.stopPropagation();exportRecordPDF('${r.formId}','${r.id}')" title="Descargar PDF" style="margin-left:auto;margin-right:8px;background:none;border:none;cursor:pointer;color:var(--brand-copper);padding:6px;">
+              <i class="lucide-file-down"></i>
+            </button>
             <span class="status-badge complete"><i class="lucide-check" style="margin-right:2px;font-size:0.7rem;"></i>OK</span>
           </div>
         `).join('')}
@@ -1096,7 +1099,7 @@ function renderReportes() {
         <h3 class="section-title"><i class="lucide-download" style="margin-right:6px;color:var(--brand-copper);font-size:1rem;"></i>Exportar</h3>
       </div>
       <div class="format-list">
-        <button class="format-card" onclick="showToast('Exportación PDF iniciada...','success')">
+        <button class="format-card" onclick="exportAllPDF()">
           <div class="fc-icon" style="background:var(--danger-light);color:var(--danger);">
             <i class="lucide-file-text"></i>
           </div>
@@ -1106,7 +1109,7 @@ function renderReportes() {
           </div>
           <i class="lucide-download fc-arrow"></i>
         </button>
-        <button class="format-card" onclick="showToast('Exportación Excel iniciada...','success')">
+        <button class="format-card" onclick="showToast('Exportación Excel — próximamente','warning')">
           <div class="fc-icon" style="background:var(--success-light);color:var(--success);">
             <i class="lucide-table"></i>
           </div>
@@ -1116,7 +1119,7 @@ function renderReportes() {
           </div>
           <i class="lucide-download fc-arrow"></i>
         </button>
-        <button class="format-card" onclick="showToast('Paquete de auditoría generado','success')">
+        <button class="format-card" onclick="exportAuditPackage()">
           <div class="fc-icon" style="background:var(--info-light);color:var(--info);">
             <i class="lucide-shield-check"></i>
           </div>
